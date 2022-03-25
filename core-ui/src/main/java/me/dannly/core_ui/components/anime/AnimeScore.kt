@@ -23,30 +23,32 @@ import me.dannly.core_ui.theme.LocalSpacing
 fun AnimeScore(
     averageScore: Number?
 ) {
-    val spacing = LocalSpacing.current
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(spacing.spaceExtraSmall),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = Icons.Outlined.Star,
-                contentDescription = null,
-                tint = Color.Black,
-                modifier = Modifier.size(23.dp)
-            )
-            Icon(
-                imageVector = Icons.Filled.Star,
-                contentDescription = stringResource(id = R.string.score),
-                tint = Color.Yellow,
-                modifier = Modifier.size(15.dp)
+    if (averageScore != null) {
+        val spacing = LocalSpacing.current
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(spacing.spaceExtraSmall),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Outlined.Star,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(23.dp)
+                )
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = stringResource(id = R.string.score),
+                    tint = Color.Yellow,
+                    modifier = Modifier.size(15.dp)
+                )
+            }
+            StrokedText(
+                text = averageScore.toString(),
+                textColor = MaterialTheme.colors.onSurface,
+                strokeColor = MaterialTheme.colors.surface,
+                fontSize = MaterialTheme.typography.subtitle1.fontSize
             )
         }
-        StrokedText(
-            text = averageScore.toString(),
-            textColor = MaterialTheme.colors.onSurface,
-            strokeColor = MaterialTheme.colors.surface,
-            fontSize = MaterialTheme.typography.subtitle1.fontSize
-        )
     }
 }
