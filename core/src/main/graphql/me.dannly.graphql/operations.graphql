@@ -1,0 +1,228 @@
+fragment fuzzyDateFragment on FuzzyDate {
+    day
+    month
+    year
+}
+
+fragment characterFragment on Character {
+    age
+    description
+    gender
+    name { userPreferred }
+    image { large medium }
+}
+
+fragment animeFragment on Media {
+    id
+    format
+    title { romaji userPreferred english native }
+    status
+    description
+    startDate { ...fuzzyDateFragment }
+    endDate { ...fuzzyDateFragment }
+    episodes
+    duration
+    coverImage { extraLarge large medium }
+    bannerImage
+    genres
+    synonyms
+    averageScore
+    meanScore
+    siteUrl
+    popularity
+    nextAiringEpisode { airingAt timeUntilAiring episode }
+    characters { nodes  { ...characterFragment } }
+}
+
+fragment userAnimeFragment on MediaList {
+    user {
+        mediaListOptions {
+            scoreFormat
+        }
+    }
+    completedAt { ...fuzzyDateFragment }
+    createdAt
+    id
+    progress
+    score
+    startedAt { ...fuzzyDateFragment }
+    status
+    updatedAt
+    media { ...animeFragment }
+}
+
+fragment userFragment on User {
+    avatar {
+        large
+        medium
+    }
+    favourites {
+        anime(page: $page, perPage: $perPage) {
+            nodes {
+                ...animeFragment
+            }
+        }
+    }
+    mediaListOptions {
+        scoreFormat
+    }
+    createdAt
+    about
+    id
+    bannerImage
+    name
+    unreadNotificationCount
+    statistics {
+        anime {
+            studios {
+                count
+                studio {
+                    name
+                }
+            }
+            minutesWatched
+            episodesWatched
+            scores {
+                count
+                score
+            }
+            meanScore
+            genres {
+                genre
+                minutesWatched
+                count
+            }
+        }
+    }
+}
+
+query ActivityQuery($page: Int, $perPage: Int, $userId: Int) {
+    Page(perPage: $perPage, page: $page) {
+        activities(userId: $userId, sort: [ID_DESC]) {
+            ...on ListActivity {
+                id
+                media {
+                    ...animeFragment
+                }
+                user {
+                    ...userFragment
+                }
+                progress
+                status
+            }
+            ...on TextActivity {
+                id
+                text
+            }
+            ...on MessageActivity {
+                id
+                message
+                messenger {
+                    ...userFragment
+                }
+            }
+        }
+    }
+}
+
+mutation Activity($id: Int) {
+    DeleteActivity(id: $id) {
+        deleted
+    }
+}
+
+query UserScoreFormatQuery {
+    Viewer {
+        mediaListOptions {
+            scoreFormat
+        }
+    }
+}
+
+query CurrentlyAuthenticatedUserQuery {
+    Viewer {
+        id
+        unreadNotificationCount
+    }
+}
+
+query UserQuery($userId: Int, $page: Int, $perPage: Int) {
+    User(id: $userId) {
+        ...userFragment
+    }
+}
+
+query UserListQuery($userName: String, $page: Int, $perPage: Int) {
+    Page(page: $page, perPage: $perPage) {
+        users(search: $userName) {
+            ...userFragment
+        }
+    }
+}
+
+query GenresQuery {
+    GenreCollection
+}
+
+query UserAnimeListQuery($userId: Int, $status: MediaListStatus, $page: Int, $perPage: Int, $sort: [MediaListSort]) {
+    Page(perPage: $perPage, page: $page) {
+        mediaList(status: $status, userId: $userId, type: ANIME, sort: $sort) {
+            ...userAnimeFragment
+        }
+    }
+}
+
+mutation UserAnime($mediaId: Int, $mediaStatus: MediaListStatus, $progress: Int, $score: Float, $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
+    SaveMediaListEntry(mediaId: $mediaId, status: $mediaStatus, progress: $progress, score: $score, startedAt: $startedAt, completedAt: $completedAt) {
+        ...userAnimeFragment
+    }
+}
+
+mutation DeleteUserAnime($animeId: Int) {
+    DeleteMediaListEntry(id: $animeId) {
+        deleted
+    }
+}
+
+query AnimeSearch($status: MediaStatus, $animeTitle: String, $page: Int, $perPage: Int, $sort: [MediaSort], $genres: [String]) {
+    Page(page: $page, perPage: $perPage) {
+        media(search: $animeTitle, status: $status, type: ANIME, sort: $sort, genre_in: $genres) {
+            ...animeFragment
+        }
+    }
+}
+
+query AnimeSearchById($animeId: Int) {
+    Media(id: $animeId, type: ANIME) {
+        ...animeFragment
+    }
+}
+
+query UserAnimeQuery($userId: Int, $mediaId: Int) {
+    MediaList(userId: $userId, mediaId: $mediaId) {
+        ...userAnimeFragment
+    }
+}
+
+query NotificationQuery($perPage: Int, $page: Int, $resetNotificationCount: Boolean = true) {
+    Page(perPage: $perPage, page: $page) {
+        notifications(resetNotificationCount: $resetNotificationCount) {
+            ... on AiringNotification {
+                media { ...animeFragment }
+                createdAt
+                episode
+            }
+            ... on RelatedMediaAdditionNotification {
+                media { ...animeFragment }
+                mediaId
+                createdAt
+            }
+            ... on ActivityLikeNotification {
+                createdAt
+                user {
+                    ...userFragment
+                }
+            }
+        }
+    }
+}

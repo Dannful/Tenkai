@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="entry_delete_confirmation">Are you sure you wish to delete this entry?</string>
+    <string name="load_failed">Failed to load. Please try again later.</string>
+    <string name="retry">Retry</string>
+</resources>

@@ -1,0 +1,38 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Tenkai"
+include ':app'
+include ':onboarding'
+include ':onboarding:onboarding_presentation'
+include ':core'
+include ':onboarding:onboarding_data'
+include ':onboarding:onboarding_domain'
+include ':home'
+include ':home:home_presentation'
+include ':home:home_domain'
+include ':home:home_data'
+include ':core-ui'
+include ':browse'
+include ':browse:browse_presentation'
+include ':browse:browse_domain'
+include ':browse:browse_data'
+include ':profile'
+include ':profile:profile_presentation'
+include ':profile:profile_domain'
+include ':profile:profile_data'
+include ':notifications'
+include ':notifications:notifications_presentation'
+include ':notifications:notifications_domain'
+include ':notifications:notifications_data'
