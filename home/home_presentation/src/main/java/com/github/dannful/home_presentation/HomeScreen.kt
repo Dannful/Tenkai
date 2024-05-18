@@ -182,7 +182,6 @@ fun NavGraphBuilder.homeSection(navHostController: NavHostController) {
     composable<Route.Home.ListView> {
         val homeViewModel =
             it.sharedViewModel<HomeViewModel>(navHostController = navHostController)
-
         homeViewModel.state.dialogMedia?.let { mediaInfo ->
             MediaInfoModal(mediaInfo = mediaInfo, onDismiss = {
                 homeViewModel.onEvent(HomeEvent.HideDialog)
@@ -222,6 +221,7 @@ fun NavGraphBuilder.homeSection(navHostController: NavHostController) {
                     }
                 })
         }
+        Text(text = "bunda")
         HomeComponent(
             currentTab = homeViewModel.state.selectedTab,
             pagingItems = homeViewModel.state.pagingData,
