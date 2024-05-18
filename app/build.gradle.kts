@@ -14,9 +14,9 @@ android {
     defaultConfig {
         applicationId = AppSettings.APP_NAMESPACE
         targetSdk = AppSettings.SDK
-        versionCode = AppSettings.VERSION_CODE
-        versionName = AppSettings.VERSION_NAME
         minSdk = AppSettings.MIN_SDK
+        versionCode = properties["VERSION_CODE"].toString().toInt()
+        versionName = properties["VERSION_NAME"].toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

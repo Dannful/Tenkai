@@ -4,8 +4,6 @@ android {
     defaultConfig {
         minSdk AppSettings.MIN_SDK
         targetSdk AppSettings.SDK
-        versionCode AppSettings.VERSION_CODE
-        versionName AppSettings.VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
