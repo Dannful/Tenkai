@@ -26,25 +26,6 @@ class DownloadCompletedReceiver : BroadcastReceiver() {
                         Environment.DIRECTORY_DOWNLOADS
                     ), context.getString(R.string.new_apk_name)
                 )
-                /*if (android.os.Build.VERSION.SDK_INT >= 29) {
-                    val newIntent = Intent(Intent.ACTION_INSTALL_PACKAGE);
-                    newIntent.setData(
-                        FileProvider.getUriForFile(
-                            context, context.applicationContext.packageName + ".provider", file
-                        )
-                    )
-                    newIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(newIntent)
-                } else {
-                    val newIntent = Intent(Intent.ACTION_VIEW)
-                    newIntent.setDataAndType(
-                        FileProvider.getUriForFile(
-                            context, context.applicationContext.packageName + ".provider", file
-                        ), "application/vnd.android.package-archive"
-                    )
-                    newIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    context.startActivity(newIntent);
-                }*/
                 val packageInstaller = context.packageManager?.packageInstaller ?: return
                 val sessionParams =
                     PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
@@ -71,6 +52,7 @@ class DownloadCompletedReceiver : BroadcastReceiver() {
                 val receiverPendingIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, flags)
                 session.commit(receiverPendingIntent.intentSender)
                 session.close()
+                file.delete()
             }
         }
     }
