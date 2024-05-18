@@ -1,5 +1,10 @@
 name: Build APK
-on: push
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: Version
 jobs:
   Build-APK:
     runs-on: ubuntu-latest
@@ -19,6 +24,13 @@ jobs:
           CLIENT_SECRET: ${{ secrets.ANILIST_CLIENT_SECRET }}
           CLIENT_REDIRECT_URL: ${{ secrets.ANILIST_REDIRECT_URL }}
         run: ./gradlew assembleRelease -PCLIENT_ID=$CLIENT_ID -PCLIENT_SECRET=$CLIENT_SECRET -PCLIENT_REDIRECT_URL=$CLIENT_REDIRECT_URL
+
+      - name: Update Android version
+        uses: chkfung/android-version-actions@v1.2.2
+        with:
+          gradlePath: app/build.gradle.kts
+          versionCode: ${{ github.run_number }}
+          versionName: ${{ inputs.version }}
 
       - name: Create release
         uses: softprops/action-gh-release@v2
