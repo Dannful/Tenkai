@@ -33,7 +33,7 @@ jobs:
         with:
           files: |
             app/build/outputs/apk/release/app-release.apk
-          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ inputs.version }}
           name: Release ${{ inputs.version }}
 
