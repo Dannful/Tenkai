@@ -1,4 +1,4 @@
-![](./core-ui/src/main/res/drawable/tenkai_round.png)
+<img src="./core-ui/src/main/res/drawable/tenkai_round.png" width="356" alt=""/>
 
 # Tenkai
 An AniList wrapper prototype built with native Android/Kotlin.
