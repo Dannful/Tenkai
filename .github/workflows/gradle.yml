@@ -17,7 +17,7 @@ jobs:
         env:
           CLIENT_ID: ${{ secrets.ANILIST_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.ANILIST_CLIENT_SECRET }}
-          CLIENT_REDIRECT_URL: ${{ secrets.ANILIST_CLIENT_SECRET }}
+          CLIENT_REDIRECT_URL: ${{ secrets.ANILIST_REDIRECT_URL }}
         run: ./gradlew assembleRelease -PCLIENT_ID=$CLIENT_ID -PCLIENT_SECRET=$CLIENT_SECRET -PCLIENT_REDIRECT_URL=$CLIENT_REDIRECT_URL
 
       - name: Upload build artifacts
