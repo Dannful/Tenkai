@@ -1,3 +1,5 @@
+![](./core-ui/src/main/res/drawable/tenkai_round.png)
+
 # Tenkai
 An AniList wrapper prototype built with native Android/Kotlin.
 
