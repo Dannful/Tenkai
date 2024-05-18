@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -123,13 +124,22 @@ class MainActivity : ComponentActivity() {
             httpClient.get(urlString = "https://api.github.com/repos/dannful/Tenkai/releases/latest")
                 .body<AppVersionResponse>()
         if (AppVersion.fromString(response.tag_name) > AppVersion.fromString(BuildConfig.VERSION_NAME)) {
+            File(
+                Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS
+                ), context.getString(R.string.new_apk_name)
+            ).apply {
+                if(exists())
+                    delete()
+            }
             val downloadManager = context.getSystemService(DownloadManager::class.java)
             val asset = response.assets.firstOrNull() ?: return
             val request = DownloadManager.Request(asset.browser_download_url.toUri())
                 .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                .setTitle(context.getString(R.string.download_new_app_version))
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "tenkai_new.apk")
+                .setTitle(context.getString(R.string.new_apk_name))
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                    getString(R.string.new_apk_name))
             downloadManager.enqueue(request)
         }
         httpClient.close()

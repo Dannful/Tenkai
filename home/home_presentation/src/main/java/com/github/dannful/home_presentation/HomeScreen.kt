@@ -221,7 +221,6 @@ fun NavGraphBuilder.homeSection(navHostController: NavHostController) {
                     }
                 })
         }
-        Text(text = "bunda")
         HomeComponent(
             currentTab = homeViewModel.state.selectedTab,
             pagingItems = homeViewModel.state.pagingData,

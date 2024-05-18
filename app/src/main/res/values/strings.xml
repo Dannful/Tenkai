@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="download_new_app_version">Download new app version…</string>
+    <string name="new_apk_name" translatable="false">tenkai_new.apk</string>
 </resources>
