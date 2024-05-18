@@ -1,3 +1,4 @@
+name: Build APK
 on: push
 jobs:
   Build-APK:
@@ -13,7 +14,11 @@ jobs:
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
       - name: Build APK with Gradle
-        run: ./gradlew assembleRelease
+        env:
+          CLIENT_ID: ${{ secrets.ANILIST_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.ANILIST_CLIENT_SECRET }}
+          CLIENT_REDIRECT_URL: ${{ secrets.ANILIST_CLIENT_SECRET }}
+        run: CLIENT_ID=$CLIENT_ID CLIENT_SECRET=$CLIENT_SECRET CLIENT_REDIRECT_URL=$CLIENT_REDIRECT_URL ./gradlew assembleRelease
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

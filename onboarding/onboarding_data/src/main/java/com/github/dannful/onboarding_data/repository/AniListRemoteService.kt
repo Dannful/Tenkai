@@ -2,7 +2,7 @@ package com.github.dannful.onboarding_data.repository
 
 import com.apollographql.apollo3.ApolloClient
 import com.github.dannful.core.domain.model.coroutines.DispatcherProvider
-import com.github.dannful.core.util.Settings
+import com.github.dannful.core.util.Constants
 import com.github.dannful.models.GetViewerIdQuery
 import com.github.dannful.onboarding_domain.repository.RemoteService
 import io.ktor.client.HttpClient
@@ -45,10 +45,10 @@ class AniListRemoteService(
                     contentType(ContentType.Application.Json)
                     setBody(
                         AccessTokenRequest(
-                            client_id = Settings.CLIENT_ID,
-                            client_secret = Settings.CLIENT_SECRET,
+                            client_id = System.getenv(Constants.CLIENT_ID_ENV_NAME)!!.toInt(),
+                            client_secret = System.getenv(Constants.CLIENT_SECRET_ENV_NAME)!!,
                             code = code,
-                            redirect_uri = Settings.REDIRECT_URL,
+                            redirect_uri = System.getenv(Constants.CLIENT_REDIRECT_URL_ENV_NAME)!!,
                             grant_type = grantType
                         )
                     )

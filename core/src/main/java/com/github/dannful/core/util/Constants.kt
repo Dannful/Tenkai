@@ -13,4 +13,7 @@ object Constants {
     const val MEDIAS_PER_PAGE = 30
     const val PREFETCH_DISTANCE = 10
 
+    const val CLIENT_ID_ENV_NAME = "CLIENT_ID"
+    const val CLIENT_SECRET_ENV_NAME = "CLIENT_SECRET"
+    const val CLIENT_REDIRECT_URL_ENV_NAME = "CLIENT_REDIRECT_URL"
 }
