@@ -1,9 +1,11 @@
 package com.github.dannful.tenkai
 
 import android.content.BroadcastReceiver
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.util.Log
 import com.github.dannful.core_ui.makeErrorToast
 
 class PackageInstallerReceiver : BroadcastReceiver() {
@@ -16,6 +18,8 @@ class PackageInstallerReceiver : BroadcastReceiver() {
                 context.startActivity(confirmationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             else -> {
+                val message = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
+                Log.e(TAG, "onReceive: $message")
                 context.makeErrorToast()
             }
         }

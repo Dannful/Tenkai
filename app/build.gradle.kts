@@ -23,7 +23,11 @@ android {
             useSupportLibrary = true
         }
     }
-
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("$rootDir/debug.keystore")
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
