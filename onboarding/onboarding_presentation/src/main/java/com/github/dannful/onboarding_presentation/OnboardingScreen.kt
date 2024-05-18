@@ -13,14 +13,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.github.dannful.core.util.Constants
+import com.github.dannful.core.BuildConfig
 import com.github.dannful.core_ui.navigation.Route
 
-private val LOGIN_URL =
-    "https://anilist.co/api/v2/oauth/authorize?client_id=${System.getenv(Constants.CLIENT_ID_ENV_NAME)}&redirect_uri=${
-        System.getenv(
-            Constants.CLIENT_REDIRECT_URL_ENV_NAME
-        )
+private const val LOGIN_URL =
+    "https://anilist.co/api/v2/oauth/authorize?client_id=${BuildConfig.CLIENT_ID}&redirect_uri=${
+        BuildConfig.CLIENT_REDIRECT_URL
     }&response_type=code"
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -35,7 +33,7 @@ private fun Onboarding(
             webViewClient = object : WebViewClient() {
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    if (url?.startsWith(System.getenv(Constants.CLIENT_REDIRECT_URL_ENV_NAME)!!) == false) return
+                    if (url?.startsWith(BuildConfig.CLIENT_REDIRECT_URL) == false) return
                     onRetrieveCodeAndSubmit(url ?: return)
                 }
             }

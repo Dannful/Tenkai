@@ -9,6 +9,16 @@ plugins {
 
 android {
     namespace = "${AppSettings.APP_PACKAGE}.core"
+    buildFeatures.buildConfig = true
+    defaultConfig {
+        buildConfigField("int", "CLIENT_ID", properties["CLIENT_ID"].toString())
+        buildConfigField("String", "CLIENT_SECRET", "\"${properties["CLIENT_SECRET"].toString()}\"")
+        buildConfigField(
+            "String",
+            "CLIENT_REDIRECT_URL",
+            "\"${properties["CLIENT_REDIRECT_URL"].toString()}\""
+        )
+    }
 }
 
 dependencies {
