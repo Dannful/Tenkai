@@ -13,6 +13,8 @@ class DownloadCompletedReceiver : BroadcastReceiver() {
 
     private lateinit var downloadManager: DownloadManager
 
+
+
     override fun onReceive(context: Context?, intent: Intent?) {
         downloadManager = context?.getSystemService(DownloadManager::class.java) ?: return
         if (intent?.action == "android.intent.action.DOWNLOAD_COMPLETE") {

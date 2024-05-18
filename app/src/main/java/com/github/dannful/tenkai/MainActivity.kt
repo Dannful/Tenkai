@@ -124,7 +124,8 @@ class MainActivity : ComponentActivity() {
                 .body<AppVersionResponse>()
         if (AppVersion.fromString(response.tag_name) > AppVersion.fromString(BuildConfig.VERSION_NAME)) {
             val downloadManager = context.getSystemService(DownloadManager::class.java)
-            val request = DownloadManager.Request(response.url.toUri())
+            val asset = response.assets.firstOrNull() ?: return
+            val request = DownloadManager.Request(asset.browser_download_url.toUri())
                 .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setTitle(context.getString(R.string.download_new_app_version))
@@ -137,7 +138,12 @@ class MainActivity : ComponentActivity() {
     @Serializable
     private data class AppVersionResponse(
         val tag_name: String,
-        val url: String
+        val assets: List<Asset>
+    )
+
+    @Serializable
+    private data class Asset(
+        val browser_download_url: String
     )
 
     private data class AppVersion(
