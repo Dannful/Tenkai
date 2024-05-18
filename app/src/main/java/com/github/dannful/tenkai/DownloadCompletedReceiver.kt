@@ -26,32 +26,44 @@ class DownloadCompletedReceiver : BroadcastReceiver() {
                         Environment.DIRECTORY_DOWNLOADS
                     ), context.getString(R.string.new_apk_name)
                 )
-                val packageInstaller = context.packageManager?.packageInstaller ?: return
-                val sessionParams =
-                    PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
-                val sessionId = packageInstaller.createSession(sessionParams)
-                val session = packageInstaller.openSession(sessionId)
-                context.contentResolver?.openInputStream(
-                    FileProvider.getUriForFile(
-                        context, context.applicationContext.packageName + ".provider", file
-                    )
-                )?.use { apkStream ->
-                    val sessionStream = session.openWrite(file.name, 0, -1)
-                    sessionStream.buffered().use { bufferedStream ->
-                        apkStream.copyTo(bufferedStream)
-                        bufferedStream.flush()
-                        session.fsync(sessionStream)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val packageInstaller = context.packageManager?.packageInstaller ?: return
+                    val sessionParams =
+                        PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
+                    val sessionId = packageInstaller.createSession(sessionParams)
+                    val session = packageInstaller.openSession(sessionId)
+                    context.contentResolver?.openInputStream(
+                        FileProvider.getUriForFile(
+                            context, context.applicationContext.packageName + ".provider", file
+                        )
+                    )?.use { apkStream ->
+                        val sessionStream = session.openWrite(file.name, 0, -1)
+                        sessionStream.buffered().use { bufferedStream ->
+                            apkStream.copyTo(bufferedStream)
+                            bufferedStream.flush()
+                            session.fsync(sessionStream)
+                        }
                     }
-                }
-                val receiverIntent = Intent(context, PackageInstallerReceiver::class.java)
-                val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    val receiverIntent = Intent(context, PackageInstallerReceiver::class.java)
+                    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    } else {
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    }
+                    val receiverPendingIntent =
+                        PendingIntent.getBroadcast(context, 0, receiverIntent, flags)
+                    session.commit(receiverPendingIntent.intentSender)
+                    session.close()
                 } else {
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    val newIntent = Intent(Intent.ACTION_VIEW)
+                    newIntent.setDataAndType(
+                        FileProvider.getUriForFile(
+                            context, context.applicationContext.packageName + ".provider", file
+                        ), "application/vnd.android.package-archive"
+                    )
+                    newIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    context.startActivity(newIntent)
                 }
-                val receiverPendingIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, flags)
-                session.commit(receiverPendingIntent.intentSender)
-                session.close()
                 file.delete()
             }
         }
