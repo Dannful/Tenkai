@@ -9,6 +9,7 @@ plugins {
 android {
     namespace = AppSettings.APP_NAMESPACE
     compileSdk = AppSettings.SDK
+    buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = AppSettings.APP_NAMESPACE
@@ -104,4 +105,9 @@ dependencies {
     implementation(libs.androidx.navigation)
 
     implementation(libs.androidx.datastore)
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 }
