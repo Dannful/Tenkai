@@ -4,6 +4,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.github.dannful.core.domain.model.coroutines.DispatcherProvider
 import com.github.dannful.core.util.Constants
 import com.github.dannful.core_ui.LocalSpacingProvider
 import com.github.dannful.core_ui.navigation.Route
@@ -38,6 +40,7 @@ import com.github.dannful.onboarding_presentation.onboardingScreen
 import com.github.dannful.tenkai.ui.theme.TenkaiTheme
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.HttpClient
+import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -57,6 +60,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dataStore: DataStore<Preferences>
 
+    @Inject
+    lateinit var dispatcherProvider: DispatcherProvider
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +77,7 @@ class MainActivity : ComponentActivity() {
                     if (it[stringPreferencesKey(Constants.DATA_STORE_TOKEN_KEY_NAME)] == null) Route.Onboarding else Route.Home
                 }.collectAsState(initial = null)
                 LaunchedEffect(key1 = Unit) {
-                    scope.launch {
+                    scope.launch(dispatcherProvider.IO) {
                         checkVersion(context = context)
                     }
                 }
@@ -113,36 +119,46 @@ class MainActivity : ComponentActivity() {
     }
 
     private suspend fun checkVersion(context: Context) {
-        val httpClient = HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                })
+        try {
+            val httpClient = HttpClient(CIO) {
+                install(ContentNegotiation) {
+                    json(Json {
+                        ignoreUnknownKeys = true
+                    })
+                }
             }
-        }
-        val response =
-            httpClient.get(urlString = "https://api.github.com/repos/dannful/Tenkai/releases/latest")
-                .body<AppVersionResponse>()
-        if (AppVersion.fromString(response.tag_name) > AppVersion.fromString(BuildConfig.VERSION_NAME)) {
-            File(
-                Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS
-                ), context.getString(R.string.new_apk_name)
-            ).apply {
-                if(exists())
-                    delete()
+            val response =
+                httpClient.get(urlString = "https://api.github.com/repos/dannful/Tenkai/releases/latest")
+                    .body<AppVersionResponse>()
+            if (AppVersion.fromString(response.tag_name) > AppVersion.fromString(BuildConfig.VERSION_NAME)) {
+                File(
+                    Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS
+                    ), context.getString(R.string.new_apk_name)
+                ).apply {
+                    if (exists())
+                        delete()
+                }
+                val downloadManager = context.getSystemService(DownloadManager::class.java)
+                val asset = response.assets.firstOrNull() ?: return
+                val request = DownloadManager.Request(asset.browser_download_url.toUri())
+                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                    .setTitle(context.getString(R.string.new_apk_name))
+                    .setDestinationInExternalPublicDir(
+                        Environment.DIRECTORY_DOWNLOADS,
+                        getString(R.string.new_apk_name)
+                    )
+                downloadManager.enqueue(request)
             }
-            val downloadManager = context.getSystemService(DownloadManager::class.java)
-            val asset = response.assets.firstOrNull() ?: return
-            val request = DownloadManager.Request(asset.browser_download_url.toUri())
-                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                .setTitle(context.getString(R.string.new_apk_name))
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-                    getString(R.string.new_apk_name))
-            downloadManager.enqueue(request)
+            httpClient.close()
+        } catch (_: NoTransformationFoundException) {
+            Log.e(
+                context.getString(
+                    com.github.dannful.core_ui.R.string.app_name
+                ), "No release versions were found."
+            )
         }
-        httpClient.close()
     }
 
     @Serializable
@@ -167,9 +183,9 @@ class MainActivity : ComponentActivity() {
                 return 1
             if (major == other.major && minor > other.minor)
                 return 1
-            if(major == other.major && minor == other.minor && patch > other.patch)
+            if (major == other.major && minor == other.minor && patch > other.patch)
                 return 1
-            if(major == other.major && minor == other.minor && patch == other.patch)
+            if (major == other.major && minor == other.minor && patch == other.patch)
                 return 0
             return -1
         }
