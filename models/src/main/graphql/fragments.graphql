@@ -1,0 +1,56 @@
+fragment mediaListFragment on MediaList {
+    id
+    status
+    score
+    progress
+    startedAt {
+        ...fuzzyDateFragment
+    }
+    updatedAt
+    completedAt {
+        ...fuzzyDateFragment
+    }
+    media {
+        ...mediaFragment
+    }
+}
+
+fragment mediaFragment on Media {
+    id
+    bannerImage
+    coverImage {
+        medium
+        large
+    }
+    averageScore
+    meanScore
+    description
+    episodes
+    synonyms
+    startDate {
+        ...fuzzyDateFragment
+    }
+    endDate {
+        ...fuzzyDateFragment
+    }
+    genres
+    status
+    title {
+        english
+        native
+        romaji
+        userPreferred
+    }
+    nextAiringEpisode {
+        timeUntilAiring
+        episode
+        airingAt
+    }
+    synonyms
+}
+
+fragment fuzzyDateFragment on FuzzyDate {
+    day
+    month
+    year
+}

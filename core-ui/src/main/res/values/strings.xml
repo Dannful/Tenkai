@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="failed_to_process_information_please_verify_your_internet_connection_and_try_again_later">Failed to process information. Please, verify your internet connection and try again later.</string>
+    <string name="no_description_provided">No description provided</string>
+    <string name="description">Description</string>
+    <string name="genres">Genres</string>
+    <string name="edit">Edit</string>
+    <string name="current">Current</string>
+    <string name="planning">Planning</string>
+    <string name="completed">Completed</string>
+    <string name="dropped">Dropped</string>
+    <string name="paused">Paused</string>
+    <string name="repeating">Repeating</string>
+    <string name="not_yet_released">Not yet released</string>
+    <string name="menu">Menu</string>
+    <string name="finished">Finished</string>
+    <string name="releasing">Releasing</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="progress">Progress</string>
+    <string name="score">Score</string>
+    <string name="send">Send</string>
+    <string name="confirm">Confirm</string>
+    <string name="change_date">Change date</string>
+    <string name="started_at">Started at</string>
+    <string name="completed_at">Completed at</string>
+    <string name="search">Search</string>
+    <string name="type_search_query">Type search query</string>
+    <string name="release_year">Release year</string>
+    <string name="clear">Clear</string>
+    <string name="app_name">Tenkai</string>
+</resources>

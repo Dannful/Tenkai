@@ -1,0 +1,5 @@
+mutation UserMediaList($mediaId: Int, $status: MediaListStatus, $progress: Int, $score: Float, $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
+    SaveMediaListEntry(mediaId: $mediaId, status: $status, completedAt: $completedAt, startedAt: $startedAt, score: $score, progress: $progress) {
+        ...mediaListFragment
+    }
+}

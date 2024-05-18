@@ -1,0 +1,66 @@
+query UserMediaLists($status: MediaListStatus, $page: Int, $perPage: Int, $userId: Int) {
+    MediaListCollection(status: $status, chunk: $page, perChunk: $perPage, userId: $userId, type: ANIME, sort: [UPDATED_TIME_DESC]) {
+        lists {
+            entries {
+                ...mediaListFragment
+            }
+        }
+        user {
+            statistics {
+                anime {
+                    statuses {
+                        status
+                        count
+                    }
+                }
+            }
+        }
+    }
+}
+
+query UserMediaProgress($userId: Int, $mediaId: Int) {
+    MediaList(mediaId: $mediaId, userId: $userId) {
+        progress
+        media {
+            episodes
+            nextAiringEpisode {
+                episode
+            }
+        }
+    }
+}
+
+query Genres {
+    GenreCollection
+}
+
+query GetUserMedia($mediaId: Int, $userId: Int) {
+    MediaList(mediaId: $mediaId, userId: $userId) {
+        ...mediaListFragment
+    }
+}
+
+query MediaSearch($query: String, $perPage: Int, $page: Int, $genres: [String], $seasonYear: Int, $sort: [MediaSort], $type: MediaType) {
+    Page(perPage: $perPage, page: $page) {
+        pageInfo {
+            lastPage
+        }
+        media(search: $query, genre_in: $genres, seasonYear: $seasonYear, sort: $sort, type: $type) {
+            ...mediaFragment
+        }
+    }
+}
+
+query GetViewerId {
+    Viewer {
+        id
+    }
+}
+
+query GetViewerScoreFormat {
+    Viewer {
+        mediaListOptions {
+            scoreFormat
+        }
+    }
+}

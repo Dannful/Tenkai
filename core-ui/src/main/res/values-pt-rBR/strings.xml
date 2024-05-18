@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="failed_to_process_information_please_verify_your_internet_connection_and_try_again_later">Falha ao processar informações. Por favor, verifique sua conexão à Internet e tente novamente mais tarde.</string>
+    <string name="no_description_provided">Nenhuma descrição providenciada.</string>
+    <string name="description">Descrição</string>
+    <string name="genres">Gêneros</string>
+    <string name="edit">Editar</string>
+    <string name="current">Em progresso</string>
+    <string name="planning">Planejado</string>
+    <string name="completed">Concluído</string>
+    <string name="dropped">Abandonado</string>
+    <string name="paused">Pausado</string>
+    <string name="repeating">Repetindo</string>
+    <string name="not_yet_released">Não lançado</string>
+    <string name="menu">Menu</string>
+    <string name="finished">Finalizado</string>
+    <string name="releasing">Lançando</string>
+    <string name="cancelled">Cancelado</string>
+    <string name="progress">Progresso</string>
+    <string name="score">Nota</string>
+    <string name="send">Enviar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="change_date">Alterar data</string>
+    <string name="started_at">Iniciado em</string>
+    <string name="completed_at">Concluído em</string>
+    <string name="search">Pesquisar</string>
+    <string name="type_search_query">Digite sua pesquisa</string>
+    <string name="release_year">Ano de lançamento</string>
+    <string name="clear">Limpar</string>
+</resources>
