@@ -1,30 +1,42 @@
 package com.github.dannful.media_search_presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -50,15 +62,120 @@ private fun MediaSearchScreen(
         modifier = Modifier
             .padding(LocalSpacingProvider.current.medium)
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(LocalSpacingProvider.current.small)
     ) {
         SearchQuery(pagingItems, mediaSearchState, onUpdateState, onSend)
         StartDate(mediaSearchState, pagingItems.isLoading, onUpdateState)
-        GenreRow(mediaSearchState, onUpdateState, onSend, pagingItems)
+        MultipleChoiceRow(
+            choices = mediaSearchState.genres,
+            selected = mediaSearchState.mediaSearch.genres,
+            enabled = !pagingItems.isLoading,
+            onUpdateState = {
+                onUpdateState(MediaSearchEvent.ToggleGenre(it))
+                onUpdateState(MediaSearchEvent.Send)
+            }
+        )
+        TagSearch(
+            query = mediaSearchState.tagSearch,
+            tags = mediaSearchState.filteredTags,
+            selected = mediaSearchState.mediaSearch.tags,
+            enabled = !pagingItems.isLoading,
+            active = mediaSearchState.tagSearchActive,
+            onActiveChange = {
+                onUpdateState(MediaSearchEvent.ToggleTagSearch(it))
+            },
+            onQueryChange = {
+                onUpdateState(MediaSearchEvent.SetTagQuery(it))
+            },
+            onUpdateState = {
+                onUpdateState(MediaSearchEvent.ToggleTag(it))
+                onUpdateState(MediaSearchEvent.Send)
+            }
+        )
         ResultsList(
             pagingItems = pagingItems,
             onEvent = onUpdateState
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TagSearch(
+    query: String,
+    tags: List<String>,
+    selected: Set<String>,
+    enabled: Boolean,
+    active: Boolean,
+    onActiveChange: (Boolean) -> Unit,
+    onQueryChange: (String) -> Unit,
+    onUpdateState: (String) -> Unit
+) {
+    DockedSearchBar(
+        query = query,
+        onQueryChange = onQueryChange,
+        onSearch = onQueryChange,
+        enabled = enabled,
+        onActiveChange = onActiveChange,
+        active = active,
+        placeholder = {
+            Text(text = stringResource(id = R.string.search_tags))
+        },
+        leadingIcon = {
+            if(active) {
+                IconButton(onClick = {
+                    onActiveChange(false)
+                }) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = stringResource(id = R.string.close))
+                }
+            } else {
+                Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+            }
+        }
+    ) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(LocalSpacingProvider.current.small),
+            contentPadding = PaddingValues(LocalSpacingProvider.current.small)
+        ) {
+            items(tags, key = { it }) {
+                Text(text = it, modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = enabled) {
+                        onUpdateState(it)
+                        onActiveChange(false)
+                        onQueryChange("")
+                    }
+                    .padding(LocalSpacingProvider.current.small))
+            }
+        }
+    }
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(
+            LocalSpacingProvider.current.small,
+            Alignment.CenterHorizontally
+        )
+    ) {
+        items(selected.toList()) {
+            AssistChip(onClick = {}, label = {
+                Box(modifier = Modifier.fillMaxHeight(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = it,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }, trailingIcon = {
+                IconButton(onClick = {
+                    onUpdateState(it)
+                }, enabled = enabled) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.close)
+                    )
+                }
+            }, modifier = Modifier.height(UiConstants.CHIP_HEIGHT))
+        }
     }
 }
 
@@ -134,11 +251,11 @@ private fun ResultsList(
 }
 
 @Composable
-private fun GenreRow(
-    mediaSearchState: MediaSearchState,
-    onUpdateState: (MediaSearchEvent) -> Unit,
-    onSend: () -> Unit,
-    pagingItems: LazyPagingItems<Media>
+private fun MultipleChoiceRow(
+    choices: List<String>,
+    selected: Set<String>,
+    enabled: Boolean,
+    onUpdateState: (String) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(
@@ -146,15 +263,14 @@ private fun GenreRow(
             Alignment.CenterHorizontally
         )
     ) {
-        items(mediaSearchState.genres, key = {
+        items(choices, key = {
             it
         }) {
-            InputChip(selected = mediaSearchState.mediaSearch.genres.contains(it), onClick = {
-                onUpdateState(MediaSearchEvent.ToggleGenre(it))
-                onSend()
+            InputChip(selected = it in selected, onClick = {
+                onUpdateState(it)
             }, label = {
                 Text(text = it)
-            }, enabled = !pagingItems.isLoading)
+            }, enabled = enabled)
         }
     }
 }

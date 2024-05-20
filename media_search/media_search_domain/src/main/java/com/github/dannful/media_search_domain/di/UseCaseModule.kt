@@ -1,10 +1,13 @@
 package com.github.dannful.media_search_domain.di
 
+import com.github.dannful.core.domain.model.coroutines.DispatcherProvider
 import com.github.dannful.core.domain.repository.UserMediaService
 import com.github.dannful.media_search_domain.repository.PagingService
 import com.github.dannful.media_search_domain.repository.RemoteService
+import com.github.dannful.media_search_domain.use_case.FilterSearch
 import com.github.dannful.media_search_domain.use_case.GetGenres
 import com.github.dannful.media_search_domain.use_case.GetScoreFormat
+import com.github.dannful.media_search_domain.use_case.GetTags
 import com.github.dannful.media_search_domain.use_case.GetUserMedia
 import com.github.dannful.media_search_domain.use_case.MediaSearchUseCases
 import com.github.dannful.media_search_domain.use_case.SearchMedia
@@ -24,12 +27,15 @@ class UseCaseModule {
     fun provideUseCases(
         remoteService: RemoteService,
         pagingService: PagingService,
-        userMediaService: UserMediaService
+        userMediaService: UserMediaService,
+        dispatcherProvider: DispatcherProvider
     ) = MediaSearchUseCases(
         getGenres = GetGenres(remoteService),
         searchMedia = SearchMedia(pagingService),
         getScoreFormat = GetScoreFormat(userMediaService),
         updateUserMedia = UpdateUserMedia(userMediaService),
-        getUserMedia = GetUserMedia(remoteService)
+        getUserMedia = GetUserMedia(remoteService),
+        getTags = GetTags(remoteService),
+        filterSearch = FilterSearch(dispatcherProvider)
     )
 }

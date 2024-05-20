@@ -27,4 +27,6 @@
     <string name="type_search_query">Digite sua pesquisa</string>
     <string name="release_year">Ano de lançamento</string>
     <string name="clear">Limpar</string>
+    <string name="close">Fechar</string>
+    <string name="search_tags">Insira tags aqui</string>
 </resources>

@@ -19,6 +19,7 @@ import com.github.dannful.media_search_domain.repository.RemoteService
 import com.github.dannful.models.GenresQuery
 import com.github.dannful.models.GetUserMediaQuery
 import com.github.dannful.models.MediaSearchQuery
+import com.github.dannful.models.MediaTagsQuery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
@@ -29,6 +30,20 @@ class AniListRemoteService(
     private val dispatcherProvider: DispatcherProvider,
     private val dataStore: DataStore<Preferences>
 ) : RemoteService {
+
+    override suspend fun getTagList(): Result<List<String>> =
+        withContext(dispatcherProvider.IO) {
+            try {
+                val apolloClient = apolloClientFlow.first()
+                val response = apolloClient.query(
+                    MediaTagsQuery()
+                ).execute()
+                Result.success(response.data?.MediaTagCollection?.mapNotNull { it?.name }
+                    ?: emptyList())
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
 
     override suspend fun retrieveMedias(
         mediaSearch: MediaSearch,
@@ -41,11 +56,12 @@ class AniListRemoteService(
                     query = Optional.presentIfNotNull(mediaSearch.query?.takeIf { it.isNotEmpty() }),
                     perPage = Optional.present(Constants.MEDIAS_PER_PAGE),
                     page = Optional.present(page),
-                    genres = Optional.presentIfNotNull(mediaSearch.genres.takeIf { it.isNotEmpty() }),
+                    genres = Optional.presentIfNotNull(mediaSearch.genres.toList().takeIf { it.isNotEmpty() }),
                     seasonYear = Optional.presentIfNotNull(mediaSearch.seasonYear),
                     sort = Optional.presentIfNotNull(mediaSearch.sort.map { it.toDataMediaSort() }
                         .takeIf { it.isNotEmpty() }),
                     type = Optional.presentIfNotNull(mediaSearch.type?.toDataMediaType()),
+                    tags = Optional.presentIfNotNull(mediaSearch.tags.toList().takeIf { it.isNotEmpty() })
                 )
             ).execute()
             Result.success(

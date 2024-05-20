@@ -9,5 +9,6 @@ interface RemoteService {
 
     suspend fun retrieveMedias(mediaSearch: MediaSearch, page: Int): Result<PageResult<Media>>
     suspend fun getGenreList(): Result<List<String>>
+    suspend fun getTagList(): Result<List<String>>
     suspend fun getUserMedia(mediaId: Int): Result<UserMedia>
 }

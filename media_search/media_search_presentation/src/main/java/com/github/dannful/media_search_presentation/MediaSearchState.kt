@@ -13,12 +13,17 @@ data class MediaSearchState(
     val mediaSearch: MediaSearch = MediaSearch(
         query = "",
         seasonYear = null,
-        genres = emptyList(),
+        genres = emptySet(),
+        tags = emptySet(),
         sort = listOf(MediaSort.POPULARITY_DESC),
         type = null
     ),
     val pagingData: Flow<PagingData<Media>> = emptyFlow(),
     val genres: List<String> = emptyList(),
+    val allTags: List<String> = emptyList(),
+    val filteredTags: List<String> = emptyList(),
+    val tagSearch: String = "",
+    val tagSearchActive: Boolean = false,
     val startDateDialogVisible: Boolean = false,
     val years: List<Int> = emptyList(),
     val clickedMedia: MediaInfo? = null,

@@ -31,7 +31,12 @@ class MediaSearchViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             state = state.copy(
-                genres = mediaSearchUseCases.getGenres().getOrNull() ?: return@launch
+                genres = mediaSearchUseCases.getGenres().getOrNull() ?: emptyList()
+            )
+            val tags = mediaSearchUseCases.getTags().getOrNull() ?: emptyList()
+            state = state.copy(
+                allTags = tags,
+                filteredTags = tags
             )
             state = state.copy(
                 pagingData = mediaSearchUseCases.searchMedia(state.mediaSearch)
@@ -59,6 +64,16 @@ class MediaSearchViewModel @Inject constructor(
                 }
                 state =
                     state.copy(mediaSearch = state.mediaSearch.copy(genres = state.mediaSearch.genres + mediaSearchEvent.genre))
+            }
+
+            is MediaSearchEvent.ToggleTag -> {
+                if (state.mediaSearch.tags.contains(mediaSearchEvent.tag)) {
+                    state =
+                        state.copy(mediaSearch = state.mediaSearch.copy(tags = state.mediaSearch.tags - mediaSearchEvent.tag))
+                    return
+                }
+                state =
+                    state.copy(mediaSearch = state.mediaSearch.copy(tags = state.mediaSearch.tags + mediaSearchEvent.tag))
             }
 
             is MediaSearchEvent.SetMediaType -> state = state.copy(
@@ -136,6 +151,21 @@ class MediaSearchViewModel @Inject constructor(
 
             MediaSearchEvent.HideDateDialog -> state = state.copy(startDateDialogVisible = false)
             MediaSearchEvent.ShowDateDialog -> state = state.copy(startDateDialogVisible = true)
+            is MediaSearchEvent.SetTagQuery -> {
+                state = state.copy(tagSearch = mediaSearchEvent.query)
+                viewModelScope.launch {
+                    state =
+                        state.copy(
+                            filteredTags = mediaSearchUseCases.filterSearch(
+                                items = state.allTags,
+                                query = state.tagSearch
+                            )
+                        )
+                }
+            }
+
+            is MediaSearchEvent.ToggleTagSearch -> state =
+                state.copy(tagSearchActive = mediaSearchEvent.searching)
         }
     }
 }

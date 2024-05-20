@@ -5,5 +5,7 @@ data class MediaSearchUseCases(
     val searchMedia: SearchMedia,
     val getScoreFormat: GetScoreFormat,
     val updateUserMedia: UpdateUserMedia,
-    val getUserMedia: GetUserMedia
+    val getUserMedia: GetUserMedia,
+    val getTags: GetTags,
+    val filterSearch: FilterSearch
 )

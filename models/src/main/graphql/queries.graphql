@@ -34,18 +34,24 @@ query Genres {
     GenreCollection
 }
 
+query MediaTags {
+    MediaTagCollection {
+        name
+    }
+}
+
 query GetUserMedia($mediaId: Int, $userId: Int) {
     MediaList(mediaId: $mediaId, userId: $userId) {
         ...mediaListFragment
     }
 }
 
-query MediaSearch($query: String, $perPage: Int, $page: Int, $genres: [String], $seasonYear: Int, $sort: [MediaSort], $type: MediaType) {
+query MediaSearch($query: String, $perPage: Int, $page: Int, $genres: [String], $tags: [String], $seasonYear: Int, $sort: [MediaSort], $type: MediaType) {
     Page(perPage: $perPage, page: $page) {
         pageInfo {
             lastPage
         }
-        media(search: $query, genre_in: $genres, seasonYear: $seasonYear, sort: $sort, type: $type) {
+        media(search: $query, genre_in: $genres, tag_in: $tags, seasonYear: $seasonYear, sort: $sort, type: $type) {
             ...mediaFragment
         }
     }

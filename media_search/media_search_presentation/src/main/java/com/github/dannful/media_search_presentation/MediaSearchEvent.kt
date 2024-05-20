@@ -8,6 +8,9 @@ sealed class MediaSearchEvent {
 
     data class SearchQuery(val query: String) : MediaSearchEvent()
     data class ToggleGenre(val genre: String) : MediaSearchEvent()
+    data class ToggleTag(val tag: String): MediaSearchEvent()
+    data class SetTagQuery(val query: String): MediaSearchEvent()
+    data class ToggleTagSearch(val searching: Boolean): MediaSearchEvent()
     data class SetMediaType(val mediaType: MediaType) : MediaSearchEvent()
     data class ToggleStartYear(val year: Int) : MediaSearchEvent()
     data class SetCurrentMedia(val media: Media?) : MediaSearchEvent()

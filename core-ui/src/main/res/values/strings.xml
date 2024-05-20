@@ -27,5 +27,7 @@
     <string name="type_search_query">Type search query</string>
     <string name="release_year">Release year</string>
     <string name="clear">Clear</string>
-    <string name="app_name">Tenkai</string>
+    <string name="app_name" translatable="false">Tenkai</string>
+    <string name="close">close</string>
+    <string name="search_tags">Search tags here</string>
 </resources>
