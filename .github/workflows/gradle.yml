@@ -30,9 +30,9 @@ jobs:
           PATCH: ${{ vars.VERSION_PATCH }}
         run: |
           case ${{ inputs.version }} in
-              Major)  echo "{MAJOR=$((MAJOR+1))}" >> $GITHUB_ENV
-                      echo "{MINOR=0}" >> $GITHUB_ENV
-                      echo "{PATCH=0}" >> $GITHUB_ENV
+              Major)  echo "MAJOR=$((MAJOR+1))" >> $GITHUB_ENV
+                      echo "MINOR=0" >> $GITHUB_ENV
+                      echo "PATCH=0" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
