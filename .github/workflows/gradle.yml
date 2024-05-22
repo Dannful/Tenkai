@@ -9,6 +9,10 @@ on:
           - Major
           - Minor
           - Patch
+env:
+  MAJOR: ${{ vars.VERSION_MAJOR }}
+  MINOR: ${{ vars.VERSION_MINOR }}
+  PATCH: ${{ vars.VERSION_PATCH }}
 jobs:
   BuildAPK:
     name: Build APK version ${{ inputs.version }}
@@ -24,10 +28,6 @@ jobs:
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
       - name: Update version tag
-        env:
-          MAJOR: ${{ vars.VERSION_MAJOR }}
-          MINOR: ${{ vars.VERSION_MINOR }}
-          PATCH: ${{ vars.VERSION_PATCH }}
         run: |
           case ${{ inputs.version }} in
               Major)  echo "MAJOR=$((MAJOR+1))" >> $GITHUB_ENV
