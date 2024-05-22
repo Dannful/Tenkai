@@ -85,6 +85,6 @@ jobs:
           files: |
             app/build/outputs/apk/release/app-release.apk
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}"
+          tag_name: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
           name: Release ${{ inputs.version }}
 
