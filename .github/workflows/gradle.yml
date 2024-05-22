@@ -25,12 +25,12 @@ jobs:
 
       - name: Update version tag
         env:
-          MAJOR: ${{ vars.VERSION_MAJOR }}
-          MINOR: ${{ vars.VERSION_MINOR }}
-          PATCH: ${{ vars.VERSION_PATCH }}
+          MAJOR_VERSION: ${{ vars.VERSION_MAJOR }}
+          MINOR_VERSION: ${{ vars.VERSION_MINOR }}
+          PATCH_VERSION: ${{ vars.VERSION_PATCH }}
         run: |
           case ${{ inputs.version }} in
-              Major)  echo "{MAJOR=$((MAJOR+1))}" >> $GITHUB_ENV
+              Major)  echo "{MAJOR=$((MAJOR_VERSION+1))}" >> $GITHUB_ENV
                       echo "{MINOR=0}" >> $GITHUB_ENV
                       echo "{PATCH=0}" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
@@ -49,7 +49,7 @@ jobs:
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": "0"}'
                       ;;
-              Minor)  echo "{MINOR=$((MINOR+1))}" >> $GITHUB_ENV
+              Minor)  echo "{MINOR=$((MINOR_VERSION+1))}" >> $GITHUB_ENV
                       echo "{PATCH=0}" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
@@ -62,7 +62,7 @@ jobs:
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": "0"))}'
                       ;;
-              Patch)  echo "{PATCH=$((PATCH+1))}" >> $GITHUB_ENV
+              Patch)  echo "{PATCH=$((PATCH_VERSION+1))}" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
