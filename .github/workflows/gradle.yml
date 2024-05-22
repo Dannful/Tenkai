@@ -24,20 +24,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+#      - name: Setup Gradle
+#        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
       - name: Update version tag
         run: |
           case ${{ inputs.version }} in
               Major)  echo "MAJOR=$((MAJOR+1))" >> $GITHUB_ENV
-                      echo "MINOR=0" >> $GITHUB_ENV
-                      echo "PATCH=0" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MAJOR \
-                          -d "{\"name\": \"VERSION_MAJOR\", \"value\": \"$((MAJOR+1))\"}"
+                          -d "{\"name\": \"VERSION_MAJOR\", \"value\": \"$MAJOR\"}"
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -49,41 +47,41 @@ jobs:
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": "0"}'
                       ;;
-              Minor)  echo "{MINOR=$((MINOR+1))}" >> $GITHUB_ENV
-                      echo "{PATCH=0}" >> $GITHUB_ENV
+              Minor)  echo "MINOR=$((MINOR+1))" >> $GITHUB_ENV
+                      echo "PATCH=0" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MINOR \
-                          -d "{\"name\": \"VERSION_MINOR\", \"value\": \"$((MINOR+1))\"}"
+                          -d "{\"name\": \"VERSION_MINOR\", \"value\": \"$MINOR\"}"
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": "0"))}'
                       ;;
-              Patch)  echo "{PATCH=$((PATCH+1))}" >> $GITHUB_ENV
+              Patch)  echo "PATCH=$((PATCH+1))" >> $GITHUB_ENV
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
                           https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
-                          -d "{\"name\": \"VERSION_PATCH\", \"value\": \"$((PATCH+1))\"}"
+                          -d "{\"name\": \"VERSION_PATCH\", \"value\": \"$PATCH\"}"
                       ;;
           esac
 
-      - name: Build APK with Gradle
-        env:
-          CLIENT_ID: ${{ secrets.ANILIST_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.ANILIST_CLIENT_SECRET }}
-          CLIENT_REDIRECT_URL: ${{ secrets.ANILIST_REDIRECT_URL }}
-        run: ./gradlew assembleRelease -PVERSION_CODE=${{ github.run_number }} -PVERSION_NAME="$MAJOR.$MINOR.$PATCH" -PCLIENT_ID=$CLIENT_ID -PCLIENT_SECRET=$CLIENT_SECRET -PCLIENT_REDIRECT_URL=$CLIENT_REDIRECT_URL
+#      - name: Build APK with Gradle
+#        env:
+#          CLIENT_ID: ${{ secrets.ANILIST_CLIENT_ID }}
+#          CLIENT_SECRET: ${{ secrets.ANILIST_CLIENT_SECRET }}
+#          CLIENT_REDIRECT_URL: ${{ secrets.ANILIST_REDIRECT_URL }}
+#        run: ./gradlew assembleRelease -PVERSION_CODE=${{ github.run_number }} -PVERSION_NAME="$MAJOR.$MINOR.$PATCH" -PCLIENT_ID=$CLIENT_ID -PCLIENT_SECRET=$CLIENT_SECRET -PCLIENT_REDIRECT_URL=$CLIENT_REDIRECT_URL
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         id: create_release
         with:
           files: |
-            app/build/outputs/apk/release/app-release.apk
+            build.gradle.kts
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
           name: Release ${{ inputs.version }}
