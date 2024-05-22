@@ -9,6 +9,7 @@ on:
           - Major
           - Minor
           - Patch
+permissions: write-all
 jobs:
   BuildAPK:
     name: Build APK version ${{ inputs.version }}
