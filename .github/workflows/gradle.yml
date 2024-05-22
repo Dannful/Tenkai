@@ -29,34 +29,34 @@ jobs:
               Major)  curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MAJOR
+                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MAJOR \
                           -d '{"name": "VERSION_MAJOR", "value": $((${{ vars.VERSION_MAJOR }}+1))}'
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MINOR
+                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MINOR \
                           -d '{"name": "VERSION_MINOR", "value": 0}'
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH
+                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": 0}'
                       ;;
               Minor)  curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MINOR
+                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_MINOR \
                           -d '{"name": "VERSION_MINOR", "value": $((${{ vars.VERSION_MINOR }}+1))}'
                       curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH
+                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": 0))}'
                       ;;
               Patch)  curl -L -X PATCH -H "Accept: application/vnd.github+json" \
                           -H "Authorization: Bearer ${{ secrets.TENKAI_TOKEN }}" \
                           -H "X-GitHub-Api-Version: 2022-11-28" \
-                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH
+                          https://api.github.com/repos/dannful/Tenkai/actions/variables/VERSION_PATCH \
                           -d '{"name": "VERSION_PATCH", "value": "$((${{ vars.VERSION_PATCH }}+1))"}'
                       echo hi
                       ;;
