@@ -21,5 +21,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material)
 
+    implementation(libs.androidx.work.runtime)
+
     implementation(libs.coil.compose)
 }

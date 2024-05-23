@@ -113,4 +113,7 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.startup.runtime)
 }

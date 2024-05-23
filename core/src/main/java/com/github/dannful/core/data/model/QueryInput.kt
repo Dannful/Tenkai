@@ -1,5 +1,8 @@
 package com.github.dannful.core.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class QueryInput<T>(
     val value: T?,
     val present: Boolean

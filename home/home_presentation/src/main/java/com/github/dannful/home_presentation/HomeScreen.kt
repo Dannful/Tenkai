@@ -255,8 +255,6 @@ private fun ConfirmScoreComponent(
     }, text = {
         OutlinedTextField(value = scoreText, onValueChange = {
             scoreText = it
-        }, isError = !isScoreValid(scoreText, userScoreFormat), label = {
-            Text(text = stringResource(id = R.string.score))
-        })
+        }, isError = !isScoreValid(scoreText, userScoreFormat))
     })
 }

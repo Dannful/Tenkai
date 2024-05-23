@@ -6,13 +6,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import androidx.work.Operation
 import com.github.dannful.core.data.model.QueryInput
+import com.github.dannful.core.domain.model.MediaDate
 import com.github.dannful.core.domain.model.UserMediaStatus
+import com.github.dannful.core.domain.model.UserMediaUpdate
 import com.github.dannful.core_ui.components.MediaInfo
 import com.github.dannful.home_domain.use_case.HomeUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +39,7 @@ class HomeViewModel @Inject constructor(
 
     private val _uiRefreshes = MutableSharedFlow<Unit>()
     val uiRefreshes = _uiRefreshes.asSharedFlow()
+    private lateinit var progressUpdateJob: Job
 
     init {
         viewModelScope.launch {
@@ -47,23 +55,57 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.UpdateMediaList -> viewModelScope.launch {
                 homeUseCases.updateMediaList(
                     homeEvent.userMediaUpdate
-                )
-                _uiRefreshes.emit(Unit)
-            }
-
-            is HomeEvent.DecreaseProgress -> viewModelScope.launch {
-                homeUseCases.progressUpdate.decrement(homeEvent.mediaId)
-                _uiRefreshes.emit(Unit)
-            }
-
-            is HomeEvent.IncreaseProgress -> viewModelScope.launch {
-                val update =
-                    homeUseCases.progressUpdate.increment(homeEvent.mediaId).getOrNull()
-                if (update != null) {
-                    state = state.copy(swipedMediaUpdate = update)
-                } else {
+                ).filter { it is Operation.State.SUCCESS }.take(1).collectLatest {
                     _uiRefreshes.emit(Unit)
                 }
+            }
+
+            is HomeEvent.DecreaseProgress -> progressUpdateJob = viewModelScope.launch {
+                if (::progressUpdateJob.isInitialized && progressUpdateJob.isActive)
+                    progressUpdateJob.cancel()
+                val progressWithEpisodes =
+                    homeUseCases.fetchProgress(homeEvent.mediaId).getOrNull() ?: return@launch
+                if (progressWithEpisodes.progress == 0)
+                    return@launch
+                onEvent(
+                    HomeEvent.UpdateMediaList(
+                        UserMediaUpdate(
+                            mediaId = QueryInput.present(homeEvent.mediaId),
+                            progress = QueryInput.present(progressWithEpisodes.progress - 1)
+                        )
+                    )
+                )
+            }
+
+            is HomeEvent.IncreaseProgress -> progressUpdateJob = viewModelScope.launch {
+                if (::progressUpdateJob.isInitialized && progressUpdateJob.isActive)
+                    progressUpdateJob.cancel()
+                val progressWithEpisodes =
+                    homeUseCases.fetchProgress(homeEvent.mediaId).getOrNull() ?: return@launch
+                if (progressWithEpisodes.progress >= (progressWithEpisodes.episodes
+                        ?: progressWithEpisodes.progress)
+                )
+                    return@launch
+                if (progressWithEpisodes.progress == progressWithEpisodes.episodes?.minus(1)) {
+                    state = state.copy(
+                        swipedMediaUpdate = UserMediaUpdate(
+                            mediaId = QueryInput.present(homeEvent.mediaId),
+                            score = QueryInput.present(0.0),
+                            status = QueryInput.present(UserMediaStatus.COMPLETED),
+                            progress = QueryInput.present(progressWithEpisodes.progress + 1),
+                            completedAt = QueryInput.present(MediaDate.today)
+                        )
+                    )
+                    return@launch
+                }
+                onEvent(
+                    HomeEvent.UpdateMediaList(
+                        UserMediaUpdate(
+                            mediaId = QueryInput.present(homeEvent.mediaId),
+                            progress = QueryInput.present(progressWithEpisodes.progress + 1)
+                        )
+                    )
+                )
             }
 
             is HomeEvent.ShowDialog -> {

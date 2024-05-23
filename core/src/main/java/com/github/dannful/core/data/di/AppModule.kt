@@ -68,10 +68,12 @@ class AppModule {
     @Singleton
     fun provideUserMediaService(
         dispatcherProvider: DispatcherProvider,
-        apolloClientFlow: Flow<ApolloClient>
+        apolloClientFlow: Flow<ApolloClient>,
+        application: Application
     ): UserMediaService = AniListService(
         dispatcherProvider = dispatcherProvider,
-        apolloClientFlow = apolloClientFlow
+        apolloClientFlow = apolloClientFlow,
+        application = application
     )
 
     private class AuthorizationInterceptor(

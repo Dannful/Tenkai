@@ -4,9 +4,9 @@ import com.github.dannful.core.domain.repository.UserMediaService
 import com.github.dannful.home_domain.repository.PresentationService
 import com.github.dannful.home_domain.repository.RemoteService
 import com.github.dannful.home_domain.use_case.FetchMediaLists
+import com.github.dannful.home_domain.use_case.FetchProgress
 import com.github.dannful.home_domain.use_case.FetchUserScoreFormat
 import com.github.dannful.home_domain.use_case.HomeUseCases
-import com.github.dannful.home_domain.use_case.ProgressUpdate
 import com.github.dannful.home_domain.use_case.UpdateMediaList
 import dagger.Module
 import dagger.Provides
@@ -27,7 +27,7 @@ class UseCaseModule {
     ) = HomeUseCases(
         fetchMediaLists = FetchMediaLists(presentationService),
         updateMediaList = UpdateMediaList(userMediaService),
-        progressUpdate = ProgressUpdate(userMediaService, remoteService),
-        fetchUserScoreFormat = FetchUserScoreFormat(userMediaService)
+        fetchUserScoreFormat = FetchUserScoreFormat(userMediaService),
+        fetchProgress = FetchProgress(remoteService)
     )
 }

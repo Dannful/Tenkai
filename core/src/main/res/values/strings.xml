@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="too_many_requests_slow_down_son">Too many requests! Slow down, son.</string>
+</resources>

@@ -1,9 +1,11 @@
 package com.github.dannful.core.domain.model
 
+import kotlinx.serialization.Serializable
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
+@Serializable
 data class MediaDate(
     val day: Int,
     val month: Int,
