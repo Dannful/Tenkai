@@ -45,6 +45,20 @@ data class MediaEntity(
     )
 }
 
+fun Media.toEntity() = MediaEntity(
+    mediaId = id,
+    description = description,
+    genres = genres,
+    bannerUrl = bannerUrl,
+    coverImageUrl = coverImageUrl,
+    episodes = episodes,
+    nextEpisode = nextEpisode,
+    timeUntilNextEpisode = timeUntilNextEpisode,
+    mediaStatus = status,
+    titles = titles,
+    synonyms = synonyms
+)
+
 class MediaConverters {
 
     @TypeConverter

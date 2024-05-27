@@ -48,10 +48,12 @@ class HomeViewModel @Inject constructor(
     fun onEvent(homeEvent: HomeEvent) {
         when (homeEvent) {
             is HomeEvent.SetCurrentTab -> state = state.copy(selectedTab = homeEvent.newTab)
-            is HomeEvent.UpdateMediaList -> viewModelScope.launch {
-                homeUseCases.updateMediaList(
-                    homeEvent.userMediaUpdate
-                )
+            is HomeEvent.UpdateMediaList -> {
+                viewModelScope.launch {
+                    homeUseCases.updateMediaList(
+                        homeEvent.userMediaUpdate
+                    )
+                }
             }
 
             is HomeEvent.DecreaseProgress -> progressUpdateJob = viewModelScope.launch {

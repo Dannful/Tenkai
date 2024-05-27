@@ -9,6 +9,7 @@ import androidx.work.WorkerParameters
 import com.apollographql.apollo3.ApolloClient
 import com.github.dannful.core.R
 import com.github.dannful.core.data.mapper.toDataMediaListStatus
+import com.github.dannful.core.data.mapper.toDomainMediaList
 import com.github.dannful.core.data.mapper.toFuzzyDateInput
 import com.github.dannful.core.data.mapper.toQuery
 import com.github.dannful.core.data.mapper.toUserMediaUpdate
@@ -51,7 +52,10 @@ internal class UserMediaUpdateWorker @AssistedInject constructor(
                     progress = userMediaUpdate.progress.toQuery()
                 )
             ).execute()
-            roomService.update(userMediaUpdate)
+            roomService.update(
+                response.data?.SaveMediaListEntry?.mediaListFragment?.toDomainMediaList()
+                    ?: return Result.failure()
+            )
             return Result.success(
                 Data.Builder().putString(
                     INPUT_DATA_KEY,

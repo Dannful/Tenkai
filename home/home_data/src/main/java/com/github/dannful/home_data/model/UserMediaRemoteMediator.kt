@@ -90,7 +90,7 @@ class UserMediaRemoteMediator(
                             progress = it.progress,
                             startedAt = it.startedAt,
                             completedAt = it.completedAt,
-                            userMediaStatus = it.score,
+                            score = it.score,
                             mediaId = it.media.id,
                             title = it.title,
                             updatedAt = it.updatedAt

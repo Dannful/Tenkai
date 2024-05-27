@@ -7,6 +7,6 @@ class UpdateMediaList(
     private val userMediaService: UserMediaService
 ) {
 
-    suspend operator fun invoke(userMediaUpdate: UserMediaUpdate) =
+    operator fun invoke(userMediaUpdate: UserMediaUpdate) =
         userMediaService.updateUserMedia(userMediaUpdate)
 }

@@ -18,7 +18,7 @@ data class UserMediaEntity(
     val title: String,
     val progress: Int,
     val status: UserMediaStatus,
-    val userMediaStatus: Double,
+    val score: Double,
     val mediaId: Int,
     val startedAt: MediaDate?,
     val completedAt: MediaDate?,
@@ -35,13 +35,25 @@ data class UserMediaEntity(
         title = title,
         progress = progress,
         status = status,
-        score = userMediaStatus,
+        score = score,
         completedAt = completedAt,
         startedAt = startedAt,
         media = mediaEntity.toMedia(),
         updatedAt = updatedAt
     )
 }
+
+fun UserMedia.toEntity() = UserMediaEntity(
+    userMediaId = id,
+    title = title,
+    progress = progress,
+    status = status,
+    score = score,
+    mediaId = media.id,
+    startedAt = startedAt,
+    completedAt = completedAt,
+    updatedAt = updatedAt,
+)
 
 class UserMediaConverters {
 

@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserMediaUpdate(
+    val id: QueryInput<Int> = QueryInput.absent(),
     val mediaId: QueryInput<Int> = QueryInput.absent(),
     val score: QueryInput<Double> = QueryInput.absent(),
     val progress: QueryInput<Int> = QueryInput.absent(),

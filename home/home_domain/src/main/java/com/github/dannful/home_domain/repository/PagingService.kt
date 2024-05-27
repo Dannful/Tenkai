@@ -8,6 +8,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface PagingService {
 
-    suspend fun update(userMediaUpdate: UserMediaUpdate): Result<Unit>
     fun pagingService(userMediaStatus: UserMediaStatus): Flow<PagingData<UserMedia>>
 }

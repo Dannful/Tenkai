@@ -5,6 +5,7 @@ import com.github.dannful.core.domain.model.UserMediaUpdate
 import com.github.dannful.models.fragment.MediaListFragment
 
 fun MediaListFragment.toUserMediaUpdate() = UserMediaUpdate(
+    id = QueryInput.present(id),
     mediaId = QueryInput.present(media!!.mediaFragment.id),
     score = QueryInput.presentIfNotNull(score),
     progress = QueryInput.presentIfNotNull(progress),
