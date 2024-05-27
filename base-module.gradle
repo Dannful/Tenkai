@@ -23,9 +23,5 @@ dependencies {
     androidTestImplementation libs.androidx.espresso.core
 
     implementation libs.hilt.android
-    kapt libs.hilt.android.compiler
-}
-
-kapt {
-    correctErrorTypes = true
+    ksp libs.hilt.android.compiler
 }

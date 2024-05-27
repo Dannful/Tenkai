@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import androidx.work.Operation
 import com.github.dannful.core.data.model.QueryInput
 import com.github.dannful.core.domain.model.MediaDate
 import com.github.dannful.core.domain.model.UserMediaStatus
@@ -17,9 +16,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,9 +51,7 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.UpdateMediaList -> viewModelScope.launch {
                 homeUseCases.updateMediaList(
                     homeEvent.userMediaUpdate
-                ).filter { it is Operation.State.SUCCESS }.take(1).collectLatest {
-                    _uiRefreshes.emit(Unit)
-                }
+                )
             }
 
             is HomeEvent.DecreaseProgress -> progressUpdateJob = viewModelScope.launch {

@@ -10,6 +10,8 @@ class QueryInput<T>(
 
     fun <V> map(transform: (T?) -> V): QueryInput<V> = QueryInput(transform(value), present)
 
+    fun getOrDefault(defaultValue: T?) = if(present) value else defaultValue
+
     companion object {
 
         fun <T> present(value: T?): QueryInput<T> = QueryInput(value, true)

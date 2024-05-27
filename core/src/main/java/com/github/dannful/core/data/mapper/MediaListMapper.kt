@@ -12,5 +12,6 @@ fun MediaListFragment.toDomainMediaList() = UserMedia(
     media = media!!.mediaFragment.toDomainMedia(),
     score = score!!,
     startedAt = startedAt?.fuzzyDateFragment?.toMediaDate(),
-    completedAt = completedAt?.fuzzyDateFragment?.toMediaDate()
+    completedAt = completedAt?.fuzzyDateFragment?.toMediaDate(),
+    updatedAt = updatedAt
 )

@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
-    alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.com.google.dev.tools.ksp)
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
@@ -27,13 +27,19 @@ dependencies {
 
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.work.runtime)
 
     implementation(libs.apollo.runtime)
-    implementation(libs.apollo.normalized.cache.sqlite)
 
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.lifecycle.livedata)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.paging.compose)
 }

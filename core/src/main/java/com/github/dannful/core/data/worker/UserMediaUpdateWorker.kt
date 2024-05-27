@@ -13,6 +13,7 @@ import com.github.dannful.core.data.mapper.toFuzzyDateInput
 import com.github.dannful.core.data.mapper.toQuery
 import com.github.dannful.core.data.mapper.toUserMediaUpdate
 import com.github.dannful.core.domain.model.UserMediaUpdate
+import com.github.dannful.core.domain.repository.RoomService
 import com.github.dannful.models.UserMediaListMutation
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -25,7 +26,8 @@ import kotlinx.serialization.json.Json
 internal class UserMediaUpdateWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val apolloClientFlow: Flow<ApolloClient>
+    private val apolloClientFlow: Flow<ApolloClient>,
+    private val roomService: RoomService
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
@@ -49,6 +51,7 @@ internal class UserMediaUpdateWorker @AssistedInject constructor(
                     progress = userMediaUpdate.progress.toQuery()
                 )
             ).execute()
+            roomService.update(userMediaUpdate)
             return Result.success(
                 Data.Builder().putString(
                     INPUT_DATA_KEY,
@@ -56,8 +59,10 @@ internal class UserMediaUpdateWorker @AssistedInject constructor(
                 ).build()
             )
         } catch (e: Exception) {
-            Toast.makeText(appContext,
-                appContext.getString(R.string.too_many_requests_slow_down_son), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                appContext,
+                appContext.getString(R.string.too_many_requests_slow_down_son), Toast.LENGTH_SHORT
+            ).show()
             return Result.failure()
         }
     }

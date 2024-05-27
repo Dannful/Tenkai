@@ -1,7 +1,9 @@
 package com.github.dannful.home_data.di
 
-import com.github.dannful.home_data.repository.PagingService
-import com.github.dannful.home_domain.repository.PresentationService
+import com.github.dannful.core.data.model.UserMediaDatabase
+import com.github.dannful.core.domain.model.coroutines.DispatcherProvider
+import com.github.dannful.home_data.repository.RoomPagingService
+import com.github.dannful.home_domain.repository.PagingService
 import com.github.dannful.home_domain.repository.RemoteService
 import dagger.Module
 import dagger.Provides
@@ -15,9 +17,15 @@ class LocalModule {
 
     @Provides
     @ViewModelScoped
-    fun providePresentationService(
+    fun provideLocalService(
+        userMediaDatabase: UserMediaDatabase,
+        dispatcherProvider: DispatcherProvider,
         remoteService: RemoteService
-    ): PresentationService = PagingService(
-        remoteService
-    )
+    ): PagingService {
+        return RoomPagingService(
+            userMediaDatabase = userMediaDatabase,
+            dispatcherProvider = dispatcherProvider,
+            remoteService = remoteService
+        )
+    }
 }

@@ -1,5 +1,6 @@
 package com.github.dannful.core.data.mapper
 
+import com.github.dannful.core.data.entity.MediaEntity
 import com.github.dannful.core.domain.model.Media
 import com.github.dannful.core.domain.model.MediaStatus
 import com.github.dannful.core.domain.model.MediaTitle
@@ -23,4 +24,18 @@ fun MediaFragment.toDomainMedia() = Media(
     synonyms = synonyms?.asSequence()?.minus(title?.english)?.minus(title?.romaji)
         ?.minus(title?.native)
         ?.filterNotNull()?.distinct()?.toList() ?: emptyList()
+)
+
+fun Media.toEntity() = MediaEntity(
+    mediaId = id,
+    mediaStatus = status,
+    description = description,
+    bannerUrl = bannerUrl,
+    coverImageUrl = coverImageUrl,
+    titles = titles,
+    timeUntilNextEpisode = timeUntilNextEpisode,
+    episodes = episodes,
+    genres = genres,
+    nextEpisode = nextEpisode,
+    synonyms = synonyms
 )

@@ -5,15 +5,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.cache.normalized.FetchPolicy
-import com.apollographql.apollo3.cache.normalized.fetchPolicy
-import com.apollographql.apollo3.cache.normalized.normalizedCache
-import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.github.dannful.core.data.model.DefaultDispatcherProvider
+import com.github.dannful.core.data.model.UserMediaDatabase
 import com.github.dannful.core.data.repository.AniListService
+import com.github.dannful.core.data.repository.UserMediaRoomService
 import com.github.dannful.core.domain.model.coroutines.DispatcherProvider
+import com.github.dannful.core.domain.repository.RoomService
 import com.github.dannful.core.domain.repository.UserMediaService
 import com.github.dannful.core.util.Constants
 import dagger.Module
@@ -56,8 +56,6 @@ class AppModule {
                 OkHttpClient.Builder()
                     .addInterceptor(AuthorizationInterceptor(it)).build()
             )
-            .normalizedCache(SqlNormalizedCacheFactory("apollo.db"))
-            .fetchPolicy(FetchPolicy.NetworkFirst)
             .build()
     }.runningReduce { previousClient, newClient ->
         previousClient.close()
@@ -89,4 +87,24 @@ class AppModule {
             return chain.proceed(request)
         }
     }
+
+    @Provides
+    @Singleton
+    fun provideUserMediaDatabase(
+        application: Application
+    ) = Room.databaseBuilder(
+        application,
+        UserMediaDatabase::class.java,
+        UserMediaDatabase.USER_MEDIA_DATABASE
+    ).build()
+
+    @Provides
+    @Singleton
+    fun provideRoomService(
+        dispatcherProvider: DispatcherProvider,
+        userMediaDatabase: UserMediaDatabase
+    ): RoomService = UserMediaRoomService(
+        dispatcherProvider,
+        userMediaDatabase
+    )
 }

@@ -31,29 +31,31 @@ class GraphQlRemoteService(
         page: Int,
         perPage: Int,
         status: UserMediaStatus
-    ): Result<PageResult<UserMedia>> = try {
-        val userId =
-            dataStore.data.mapNotNull { it[intPreferencesKey(Constants.DATA_STORE_USER_ID_KEY_NAME)] }
-                .first()
-        val apolloClient = apolloClientFlow.first()
-        val response = apolloClient.query(
-            UserMediaListsQuery(
-                status = Optional.present(status.toDataMediaListStatus()),
-                page = Optional.present(page),
-                perPage = Optional.present(perPage),
-                userId = Optional.present(userId)
+    ): Result<PageResult<UserMedia>> = withContext(dispatcherProvider.IO) {
+        try {
+            val userId =
+                dataStore.data.mapNotNull { it[intPreferencesKey(Constants.DATA_STORE_USER_ID_KEY_NAME)] }
+                    .first()
+            val apolloClient = apolloClientFlow.first()
+            val response = apolloClient.query(
+                UserMediaListsQuery(
+                    status = Optional.present(status.toDataMediaListStatus()),
+                    page = Optional.present(page),
+                    perPage = Optional.present(perPage),
+                    userId = Optional.present(userId)
+                )
+            ).execute()
+            Result.success(
+                PageResult(
+                    total = response.data!!.MediaListCollection!!.user!!.statistics!!.anime!!.statuses!!.find { it?.status == status.toDataMediaListStatus() }?.count
+                        ?: 0,
+                    items = response.data!!.MediaListCollection!!.lists!!.mapNotNull { list -> list!!.entries!!.mapNotNull { it!!.mediaListFragment.toDomainMediaList() } }
+                        .flatten(),
+                )
             )
-        ).execute()
-        Result.success(
-            PageResult(
-                total = response.data!!.MediaListCollection!!.user!!.statistics!!.anime!!.statuses!!.find { it?.status == status.toDataMediaListStatus() }?.count
-                    ?: 0,
-                items = response.data!!.MediaListCollection!!.lists!!.mapNotNull { list -> list!!.entries!!.mapNotNull { it!!.mediaListFragment.toDomainMediaList() } }
-                    .flatten(),
-            )
-        )
-    } catch (e: Exception) {
-        Result.failure(e)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun getUserMediaProgress(mediaId: Int): Result<UserMediaProgressInfo> =
@@ -80,4 +82,5 @@ class GraphQlRemoteService(
                 Result.failure(e)
             }
         }
+
 }

@@ -1,11 +1,11 @@
 package com.github.dannful.home_domain.use_case
 
 import com.github.dannful.core.domain.model.UserMediaStatus
-import com.github.dannful.home_domain.repository.PresentationService
+import com.github.dannful.home_domain.repository.PagingService
 
 class FetchMediaLists(
-    private val presentationService: PresentationService
+    private val pagingService: PagingService
 ) {
 
-    operator fun invoke(status: UserMediaStatus) = presentationService.fetchUserMediaLists(status)
+    operator fun invoke(status: UserMediaStatus) = pagingService.pagingService(status)
 }
