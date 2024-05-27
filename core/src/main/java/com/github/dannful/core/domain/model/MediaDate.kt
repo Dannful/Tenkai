@@ -17,22 +17,31 @@ data class MediaDate(
         val today: MediaDate
             get() {
                 val calendar = Calendar.getInstance(Locale.getDefault())
-                calendar.timeZone = TimeZone.getTimeZone("UTC")
                 return MediaDate(
                     day = calendar.get(Calendar.DAY_OF_MONTH),
-                    month = calendar.get(Calendar.MONTH) + 1,
+                    month = calendar.get(Calendar.MONTH),
                     year = calendar.get(Calendar.YEAR)
                 )
             }
+
+        fun fromMillis(millis: Long): MediaDate {
+            val calendar = Calendar.getInstance(Locale.getDefault())
+            calendar.timeInMillis = millis
+            return MediaDate(
+                day = calendar.get(Calendar.DAY_OF_MONTH),
+                month = calendar.get(Calendar.MONTH),
+                year = calendar.get(Calendar.YEAR)
+            )
+        }
     }
 
     val millis: Long
         get() {
             val calendar = Calendar.getInstance(Locale.getDefault())
-            calendar.timeZone = TimeZone.getTimeZone("UTC")
             calendar.set(Calendar.DAY_OF_MONTH, day)
-            calendar.set(Calendar.MONTH, month - 1)
+            calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.YEAR, year)
+            calendar.timeZone = TimeZone.getTimeZone("UTC")
             return calendar.timeInMillis
         }
 }

@@ -1,7 +1,5 @@
 package com.github.dannful.core_ui.components
 
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +47,6 @@ import com.github.dannful.core_ui.LocalSpacingProvider
 import com.github.dannful.core_ui.R
 import com.github.dannful.core_ui.util.UiConstants
 import com.github.dannful.core_ui.util.domainUserStatus
-import java.util.Locale
 import kotlin.math.roundToInt
 
 data class MediaInfo(
@@ -221,13 +218,33 @@ private fun EditEntry(
                     label = stringResource(id = R.string.started_at),
                     initialValue = mediaInfo.mediaUpdate.startedAt.value?.millis
                 ) {
-                    editInfo(mediaInfo.mediaUpdate.copy(startedAt = QueryInput.present(it?.toMediaDate())))
+                    if (it == null)
+                        return@DateSelector
+                    editInfo(
+                        mediaInfo.mediaUpdate.copy(
+                            startedAt = QueryInput.present(
+                                MediaDate.fromMillis(
+                                    it
+                                )
+                            )
+                        )
+                    )
                 }
                 DateSelector(
                     label = stringResource(id = R.string.completed_at),
                     initialValue = mediaInfo.mediaUpdate.completedAt.value?.millis
                 ) {
-                    editInfo(mediaInfo.mediaUpdate.copy(completedAt = QueryInput.present(it?.toMediaDate())))
+                    if (it == null)
+                        return@DateSelector
+                    editInfo(
+                        mediaInfo.mediaUpdate.copy(
+                            completedAt = QueryInput.present(
+                                MediaDate.fromMillis(
+                                    it
+                                )
+                            )
+                        )
+                    )
                 }
                 Button(
                     onClick = {
@@ -342,15 +359,3 @@ private fun MediaInfo.isScoreValid(score: String) =
 fun isScoreValid(score: String, userScoreFormat: UserScoreFormat) =
     (score.matches(userScoreFormat.allowedRegexFilter) && score.toDoubleOrNull() != null &&
             score.toDouble() in userScoreFormat.valueRange)
-
-fun Long.toMediaDate(): MediaDate {
-    val calendar = Calendar.getInstance(Locale.getDefault())
-    calendar.timeZone = TimeZone.getTimeZone("UTC")
-    calendar.timeInMillis = this
-    val mediaDate = MediaDate(
-        day = calendar.get(Calendar.DAY_OF_MONTH),
-        month = calendar.get(Calendar.MONTH),
-        year = calendar.get(Calendar.YEAR)
-    )
-    return mediaDate
-}
