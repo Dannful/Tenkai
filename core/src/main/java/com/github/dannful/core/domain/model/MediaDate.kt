@@ -26,6 +26,7 @@ data class MediaDate(
 
         fun fromMillis(millis: Long): MediaDate {
             val calendar = Calendar.getInstance(Locale.getDefault())
+            calendar.timeZone = TimeZone.getTimeZone("UTC")
             calendar.timeInMillis = millis
             return MediaDate(
                 day = calendar.get(Calendar.DAY_OF_MONTH),

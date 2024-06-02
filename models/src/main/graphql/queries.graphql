@@ -18,6 +18,14 @@ query UserMediaLists($status: MediaListStatus, $page: Int, $perPage: Int, $userI
     }
 }
 
+query GetRecommendations($userId: Int, $mediaId: Int) {
+    Recommendation(userId: $userId, mediaId: $mediaId) {
+        media {
+            ...mediaFragment
+        }
+    }
+}
+
 query UserMediaProgress($userId: Int, $mediaId: Int) {
     MediaList(mediaId: $mediaId, userId: $userId) {
         progress
